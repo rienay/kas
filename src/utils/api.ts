@@ -4,7 +4,7 @@ import { Transaksi, UtangPiutang, KasAnggota, User, PenerimaanDana, PerjalananDi
 const getScriptUrl = (): string => {
   const override = localStorage.getItem('kas_dkc_gas_url_override');
   if (override) return override.trim();
-  return (import.meta.env.VITE_GAS_URL || 'https://script.google.com/macros/s/AKfycbzffJiiU-VmD9cz6rMTkXWawayAksAhNyj6eZZ9obUQ74URi31qLJORp7laqnxARx41Pw/exec').trim();
+  return (import.meta.env.VITE_GAS_URL || 'https://script.google.com/macros/s/AKfycbx6hipxrU7VFxEpdoNaoMoVVqcEJyb4P1ZWVqZ9N11ePn4WmXaUQm_ZtvbaVPbQrQxHOA/exec').trim();
 };
 
 // Cek apakah aplikasi berjalan dalam mode Demo

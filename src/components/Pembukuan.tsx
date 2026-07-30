@@ -138,29 +138,29 @@ export default function PembukuanComponent({ transaksi, utangPiutang, penerimaan
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-900 pb-5 no-print">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/80 pb-5 no-print">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight text-slate-100">Buku Besar (Ledger)</h1>
-          <p className="text-slate-400 text-xs mt-1">Pembukuan terpadu mencakup Kas, Utang, Piutang, dan Dana Kwarcab.</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight text-slate-800">Buku Besar (Ledger)</h1>
+          <p className="text-slate-500 text-xs mt-1">Pembukuan terpadu mencakup Kas, Utang, Piutang, dan Dana Kwarcab.</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={handleExportCSV} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition">
-            <Download size={14} /> CSV
+          <button onClick={handleExportCSV} className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 rounded-xl transition shadow-xs">
+            <Download size={14} className="text-slate-500" /> CSV
           </button>
-          <button onClick={() => window.print()} className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition">
+          <button onClick={() => window.print()} className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-2 rounded-xl transition shadow-md shadow-violet-500/20">
             <Printer size={14} /> Print Landscape
           </button>
         </div>
       </div>
 
       {/* Filter Tahun */}
-      <div className="glass-panel geo-border p-4 flex gap-4 items-center no-print">
-        <Filter size={14} className="text-slate-500" />
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Tahun Buku:</span>
-        <select value={filterTahun} onChange={(e) => setFilterTahun(e.target.value)} className="bg-slate-900 border border-slate-800 px-3 py-1 text-xs text-slate-300 focus:outline-none">
+      <div className="glass-panel p-4 flex gap-4 items-center no-print rounded-2xl shadow-xs">
+        <Filter size={14} className="text-violet-600" />
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Tahun Buku:</span>
+        <select value={filterTahun} onChange={(e) => setFilterTahun(e.target.value)} className="bg-white border border-slate-200 px-3 py-1.5 text-xs text-slate-800 rounded-xl focus:outline-none shadow-xs">
           <option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option>
         </select>
       </div>
@@ -173,29 +173,29 @@ export default function PembukuanComponent({ transaksi, utangPiutang, penerimaan
       </div>
 
       {/* Tabel Landscape Utama */}
-      <div className="glass-panel geo-border p-5 print:bg-white print:border-none print:p-0">
+      <div className="glass-panel p-5 print:bg-white print:border-none print:p-0 rounded-3xl shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-[10px] sm:text-xs whitespace-nowrap print:text-black print:text-[9px]" style={{pageBreakInside:'auto'}}>
             <thead>
-              <tr className="border-b-2 border-slate-800 text-slate-400 print:text-slate-900 font-bold uppercase tracking-wider bg-slate-900/50 print:bg-slate-200">
-                <th className="p-2">Tanggal</th>
-                <th className="p-2">Modul</th>
-                <th className="p-2">Kategori</th>
-                <th className="p-2 max-w-xs truncate print:max-w-none print:whitespace-normal">Rincian</th>
-                <th className="p-2 text-right text-emerald-500 print:text-emerald-700">Masuk (Debit)</th>
-                <th className="p-2 text-right text-rose-500 print:text-rose-700">Keluar (Kredit)</th>
-                <th className="p-2 text-right text-sky-400 print:text-slate-900">Saldo Kas</th>
-                <th className="p-2 text-right text-purple-400 print:text-slate-900">Saldo Kwarcab</th>
+              <tr className="border-b border-slate-100 text-slate-500 print:text-slate-900 font-bold uppercase tracking-wider bg-slate-50 print:bg-slate-200">
+                <th className="p-2.5">Tanggal</th>
+                <th className="p-2.5">Modul</th>
+                <th className="p-2.5">Kategori</th>
+                <th className="p-2.5 max-w-xs truncate print:max-w-none print:whitespace-normal">Rincian</th>
+                <th className="p-2.5 text-right text-emerald-600 print:text-emerald-700">Masuk (Debit)</th>
+                <th className="p-2.5 text-right text-rose-600 print:text-rose-700">Keluar (Kredit)</th>
+                <th className="p-2.5 text-right text-violet-700 print:text-slate-900">Saldo Kas</th>
+                <th className="p-2.5 text-right text-purple-700 print:text-slate-900">Saldo Kwarcab</th>
               </tr>
             </thead>
             {groupedItems.length === 0 ? (
-              <tbody><tr><td colSpan={8} className="p-6 text-center italic text-slate-500">Buku besar kosong pada tahun ini.</td></tr></tbody>
+              <tbody><tr><td colSpan={8} className="p-6 text-center italic text-slate-400">Buku besar kosong pada tahun ini.</td></tr></tbody>
             ) : (() => {
               let saldoKas = 0; let saldoKwarcab = 0;
               return groupedItems.map((group) => (
                 <tbody key={group.monthIndex}>
-                  <tr className="bg-slate-900 print:bg-slate-100 border-y border-slate-800 print:border-slate-300">
-                    <td colSpan={8} className="p-2 font-bold uppercase tracking-widest text-sky-400 print:text-slate-800 text-center">
+                  <tr className="bg-violet-50/70 print:bg-slate-100 border-y border-violet-100 print:border-slate-300">
+                    <td colSpan={8} className="p-2 font-bold uppercase tracking-widest text-violet-700 print:text-slate-800 text-center">
                       -- Bulan {group.monthName} --
                     </td>
                   </tr>
@@ -203,15 +203,15 @@ export default function PembukuanComponent({ transaksi, utangPiutang, penerimaan
                     if (item.isKas) saldoKas += (item.masuk - item.keluar);
                     if (item.isKwarcab) saldoKwarcab += (item.masuk - item.keluar);
                     return (
-                      <tr key={idx} className="border-b border-slate-900/40 print:border-slate-300 hover:bg-slate-900/30" style={{pageBreakInside:'avoid'}}>
-                        <td className="p-2">{item.tanggal}</td>
-                        <td className="p-2 font-semibold text-slate-300 print:text-slate-800">{item.modul}</td>
-                        <td className="p-2 text-slate-400 print:text-slate-700">{item.kategori}</td>
-                        <td className="p-2 max-w-xs truncate print:max-w-none print:whitespace-normal" title={item.rincian}>{item.rincian}</td>
-                        <td className="p-2 text-right text-emerald-400 print:text-emerald-700 font-medium">{item.masuk > 0 ? formatIDR(item.masuk) : '-'}</td>
-                        <td className="p-2 text-right text-rose-400 print:text-rose-700 font-medium">{item.keluar > 0 ? formatIDR(item.keluar) : '-'}</td>
-                        <td className="p-2 text-right font-bold text-slate-200 print:text-black bg-slate-900/30 print:bg-transparent">{formatIDR(saldoKas)}</td>
-                        <td className="p-2 text-right font-bold text-purple-300 print:text-black bg-slate-900/30 print:bg-transparent">{formatIDR(saldoKwarcab)}</td>
+                      <tr key={idx} className="border-b border-slate-100 print:border-slate-300 hover:bg-violet-50/40 transition" style={{pageBreakInside:'avoid'}}>
+                        <td className="p-2.5 text-slate-500 font-medium">{item.tanggal}</td>
+                        <td className="p-2.5 font-semibold text-slate-800 print:text-slate-800">{item.modul}</td>
+                        <td className="p-2.5 text-slate-600 print:text-slate-700">{item.kategori}</td>
+                        <td className="p-2.5 max-w-xs truncate print:max-w-none print:whitespace-normal" title={item.rincian}>{item.rincian}</td>
+                        <td className="p-2.5 text-right text-emerald-600 print:text-emerald-700 font-semibold">{item.masuk > 0 ? formatIDR(item.masuk) : '-'}</td>
+                        <td className="p-2.5 text-right text-rose-600 print:text-rose-700 font-semibold">{item.keluar > 0 ? formatIDR(item.keluar) : '-'}</td>
+                        <td className="p-2.5 text-right font-bold text-slate-800 print:text-black bg-slate-50/50 print:bg-transparent">{formatIDR(saldoKas)}</td>
+                        <td className="p-2.5 text-right font-bold text-purple-700 print:text-black bg-slate-50/50 print:bg-transparent">{formatIDR(saldoKwarcab)}</td>
                       </tr>
                     );
                   })}

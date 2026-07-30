@@ -70,7 +70,7 @@ export default function App() {
 
   // Settings State (Konfigurasi GAS URL)
   const [showSettings, setShowSettings] = useState<boolean>(false);
-  const [gasUrlInput, setGasUrlInput] = useState<string>(import.meta.env.VITE_GAS_URL || 'https://script.google.com/macros/s/AKfycbzffJiiU-VmD9cz6rMTkXWawayAksAhNyj6eZZ9obUQ74URi31qLJORp7laqnxARx41Pw/exec');
+  const [gasUrlInput, setGasUrlInput] = useState<string>(import.meta.env.VITE_GAS_URL || 'https://script.google.com/macros/s/AKfycbx6hipxrU7VFxEpdoNaoMoVVqcEJyb4P1ZWVqZ9N11ePn4WmXaUQm_ZtvbaVPbQrQxHOA/exec');
 
 
 
