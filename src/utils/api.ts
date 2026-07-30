@@ -202,10 +202,49 @@ export const api = {
     }
 
     const res = await postToGAS('getAllData');
+    
+    // Normalisasi data transaksi dari Google Sheets untuk mencegah tipe data korup
+    const normalizedTransaksi: Transaksi[] = (res.transaksi || []).map((t: any) => {
+      // Normalisasi Jenis
+      const jenisRaw = String(t.jenis || t.Jenis || '').trim().toUpperCase();
+      const jenis: 'Pemasukan' | 'Pengeluaran' = (jenisRaw === 'IN' || jenisRaw === 'PEMASUKAN') ? 'Pemasukan' : 'Pengeluaran';
+
+      // Normalisasi Jumlah & Keterangan jika terbalik di Sheets
+      let rawJumlah = t.jumlah !== undefined ? t.jumlah : t.Jumlah;
+      let rawKeterangan = t.keterangan !== undefined ? t.keterangan : t.Keterangan;
+      
+      let jumlah = 0;
+      let keterangan = '';
+
+      if (typeof rawJumlah === 'number') {
+        jumlah = rawJumlah;
+        keterangan = String(rawKeterangan || '');
+      } else if (typeof rawKeterangan === 'number') {
+        // Terbalik di Sheet
+        jumlah = rawKeterangan;
+        keterangan = String(rawJumlah || '');
+      } else {
+        const parsed = parseFloat(String(rawJumlah || '').replace(/[^0-9.-]+/g, ''));
+        jumlah = isNaN(parsed) ? 0 : parsed;
+        keterangan = String(rawKeterangan || '');
+      }
+
+      return {
+        id: String(t.id || t.ID || ''),
+        tanggal: String(t.tanggal || t.Tanggal || ''),
+        jenis,
+        kategori: String(t.kategori || t.Kategori || 'Lain-lain'),
+        jumlah,
+        keterangan,
+        buktiTransaksi: String(t.buktiTransaksi || t['Bukti Transaksi'] || ''),
+        inputOleh: String(t.inputOleh || t['Input Oleh'] || 'Sistem')
+      };
+    });
+
     return {
-      transaksi: res.transaksi,
-      utangPiutang: res.utangPiutang,
-      kasAnggota: res.kasAnggota,
+      transaksi: normalizedTransaksi,
+      utangPiutang: res.utangPiutang || [],
+      kasAnggota: res.kasAnggota || [],
       penerimaanDana: res.penerimaanDana || [],
       perjalananDinas: res.perjalananDinas || []
     };

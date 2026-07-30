@@ -212,12 +212,19 @@ export default function TransaksiComponent({ role, transaksi, onEditTransaksi, o
     document.body.appendChild(link); link.click(); document.body.removeChild(link);
   };
 
-  const formatIDR = (num: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(num);
+  const formatIDR = (num: any): string => {
+    if (num === null || num === undefined) return 'Rp 0';
+    const val = typeof num === 'number' ? num : parseFloat(String(num).replace(/[^0-9.-]+/g, ''));
+    if (isNaN(val)) return 'Rp 0';
+    try {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(val);
+    } catch {
+      return `Rp ${val}`;
+    }
   };
 
   return (
