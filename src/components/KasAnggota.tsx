@@ -420,24 +420,24 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
   };
 
   return (
-    <div className="space-y-6 print-area">
+    <div className="space-y-6 print-area font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-900 pb-5 no-print">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/80 pb-5 no-print">
         <div>
-          <h1 className="text-2xl font-display font-bold tracking-tight text-slate-100">
+          <h1 className="text-2xl font-display font-bold tracking-tight text-slate-800">
             Kas Rutin Anggota
           </h1>
-          <p className="text-slate-400 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1">
             Matriks pemantauan iuran wajib bulanan seluruh pengurus Dewan Kerja Cabang Cilacap.
           </p>
         </div>
         <div className="flex gap-2">
-          <button onClick={handleExportCSV} className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition">
-            <Download size={14} /> CSV / Excel
+          <button onClick={handleExportCSV} className="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 rounded-xl transition shadow-xs">
+            <Download size={14} className="text-emerald-600" /> CSV / Excel
           </button>
-          <button onClick={() => window.print()} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 transition">
-            <Printer size={14} /> Print
+          <button onClick={() => window.print()} className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 rounded-xl transition shadow-xs">
+            <Printer size={14} className="text-slate-500" /> Print
           </button>
         </div>
       </div>
@@ -491,10 +491,10 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
       </div>
 
       {/* Control Panel */}
-      <div className="glass-panel geo-border p-4 flex flex-col md:flex-row gap-4 no-print">
+      <div className="bg-white/80 backdrop-blur-xl border border-slate-200/80 p-4 flex flex-col md:flex-row gap-4 no-print rounded-2xl shadow-xs">
         {/* Search */}
         <div className="flex-1 relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
             <Search size={14} />
           </span>
           <input
@@ -502,7 +502,7 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
             placeholder="Cari nama anggota pengurus..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-900/60 border border-slate-900 text-slate-300 placeholder-slate-600 text-xs focus:outline-none focus:border-slate-800 font-sans"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 text-xs focus:outline-none focus:border-violet-400 focus:bg-white rounded-xl font-sans"
           />
         </div>
 
@@ -512,14 +512,14 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
           <select
             value={selectedTahun}
             onChange={(e) => setSelectedTahun(parseInt(e.target.value))}
-            className="bg-slate-900 border border-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 focus:outline-none"
+            className="bg-white border border-slate-200 px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none rounded-xl shadow-xs"
           >
             {availableYears.map(y => (
               <option key={y} value={y}>{y}</option>
             ))}
           </select>
           {role === 'Bendahara' && (
-            <button onClick={handleAddTahun} className="px-2 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold uppercase tracking-wider transition">
+            <button onClick={handleAddTahun} className="px-3 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-wider transition rounded-xl">
               + Tahun Baru
             </button>
           )}
@@ -527,13 +527,13 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
       </div>
 
       {/* Dues Matrix Table (Desktop & Scrollable) */}
-      <div className="glass-panel geo-border p-5 no-print">
+      <div className="bg-white/80 backdrop-blur-xl border border-slate-200/80 p-5 no-print rounded-3xl shadow-xs">
         <div className="flex justify-between items-center mb-4 no-print">
-          <h2 className="text-xs font-display font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Calendar size={14} className="text-sky-500" /> Matriks Pembayaran Tahun {selectedTahun}
+          <h2 className="text-xs font-display font-semibold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <Calendar size={14} className="text-violet-600" /> Matriks Pembayaran Tahun {selectedTahun}
           </h2>
           {role === 'Bendahara' && (
-            <button onClick={() => setShowAddForm(!showAddForm)} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider transition">
+            <button onClick={() => setShowAddForm(!showAddForm)} className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-[10px] font-bold uppercase tracking-wider transition rounded-xl shadow-xs">
               {showAddForm ? 'Batal Tambah' : '+ Tambah Anggota'}
             </button>
           )}
@@ -542,7 +542,7 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-[11px]">
             <thead>
-              <tr className="border-b border-slate-900 text-slate-500 font-semibold uppercase tracking-wider">
+              <tr className="border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
                 <th className="pb-3 pl-3 font-display text-xs">Nama Anggota</th>
                 {BULAN_LIST.map(b => (
                   <th key={b} className="pb-3 text-center min-w-[70px]">{b.slice(0, 3)}</th>
@@ -556,9 +556,9 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                 const totalUnpaid = (12 * anggota.janjiBayarPerBulan) - totalPaid;
 
                 return (
-                  <tr key={anggota.nama || idx} className={`border-b border-slate-900/40 hover:bg-slate-900/20 transition-colors ${!isAktif ? 'opacity-50 grayscale' : ''}`}>
+                  <tr key={anggota.nama || idx} className={`border-b border-slate-100 hover:bg-violet-50/40 transition-colors ${!isAktif ? 'opacity-50 grayscale' : ''}`}>
                   <td className="py-3 pl-3 pr-2">
-                    <div className="font-semibold text-slate-200">{anggota.nama}</div>
+                    <div className="font-semibold text-slate-800">{anggota.nama}</div>
                     <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-0.5 mb-1.5">{anggota.jabatan}</div>
                     {role === 'Bendahara' ? (
                       <select
@@ -568,13 +568,13 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                             onUpdateStatusAnggota(anggota.nama, Number(anggota.tahunMasuk || selectedTahun), e.target.value as 'Aktif' | 'Tidak Aktif').catch(err => alert(err instanceof Error ? err.message : 'Error'));
                           }
                         }}
-                        className={`text-[9px] font-bold uppercase tracking-wider bg-slate-900 border ${isAktif ? 'border-emerald-500/30 text-emerald-400' : 'border-rose-500/30 text-rose-400'} px-1 py-0.5 rounded-none outline-none focus:border-sky-500 cursor-pointer w-auto`}
+                        className={`text-[9px] font-bold uppercase tracking-wider bg-white border ${isAktif ? 'border-emerald-300 text-emerald-700' : 'border-rose-300 text-rose-700'} px-1.5 py-0.5 rounded-lg outline-none focus:border-violet-500 cursor-pointer w-auto shadow-xs`}
                       >
                         <option value="Aktif">Aktif</option>
                         <option value="Tidak Aktif">Tidak Aktif</option>
                       </select>
                     ) : (
-                      <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 ${isAktif ? 'text-emerald-400 border border-emerald-500/30' : 'text-rose-400 border border-rose-500/30'}`}>
+                      <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-lg ${isAktif ? 'text-emerald-700 bg-emerald-50 border border-emerald-200' : 'text-rose-700 bg-rose-50 border border-rose-200'}`}>
                         {anggota.statusAktif || 'Aktif'}
                       </span>
                     )}
@@ -587,13 +587,13 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                         tanggalBayar: ''
                       };
 
-                      let bgClass = 'bg-slate-950 text-slate-600 border-slate-900';
+                      let bgClass = 'bg-slate-100/80 text-slate-500 border-slate-200/80';
                       if (!isAktif && dataBulan.status === 'Belum Bayar') {
-                        bgClass = 'bg-slate-900/30 text-slate-700 border-slate-800/50 opacity-40';
+                        bgClass = 'bg-slate-100/40 text-slate-300 border-slate-200/40 opacity-40';
                       } else if (dataBulan.status === 'Lunas') {
-                        bgClass = 'bg-emerald-950/40 text-emerald-400 border-emerald-500/20';
+                        bgClass = 'bg-emerald-50 text-emerald-700 border-emerald-200 font-bold';
                       } else if (dataBulan.status === 'Dicicil') {
-                        bgClass = 'bg-amber-950/40 text-amber-400 border-amber-500/20';
+                        bgClass = 'bg-amber-50 text-amber-700 border-amber-200 font-bold';
                       }
 
                       return (
@@ -602,7 +602,7 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                             <button
                               onClick={() => isAktif && setSelectedPayUser({ nama: anggota.nama, bulan })}
                               disabled={!isAktif}
-                              className={`w-full py-1 border text-[9px] font-bold uppercase tracking-wider transition flex flex-col items-center justify-center gap-0.5 ${bgClass} ${isAktif ? 'hover:brightness-125 cursor-pointer' : 'cursor-not-allowed'}`}
+                              className={`w-full py-1.5 border text-[9px] font-bold uppercase tracking-wider rounded-xl transition flex flex-col items-center justify-center gap-0.5 ${bgClass} ${isAktif ? 'hover:scale-105 hover:shadow-xs cursor-pointer' : 'cursor-not-allowed'}`}
                               title={!isAktif ? 'Anggota sudah tidak aktif' : `Klik untuk catat iuran - Status: ${dataBulan.status} (${formatIDR(dataBulan.jumlah)})`}
                             >
                               <span className="text-[10px] font-mono">{formatIDR(dataBulan.jumlah)}</span>
@@ -612,7 +612,7 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                               )}
                             </button>
                           ) : (
-                            <div className={`py-1 px-0.5 border text-[9px] font-bold uppercase tracking-wider flex flex-col items-center justify-center gap-0.5 ${bgClass}`}>
+                            <div className={`py-1.5 px-0.5 border text-[9px] font-bold uppercase tracking-wider rounded-xl flex flex-col items-center justify-center gap-0.5 ${bgClass}`}>
                               <span>{!isAktif && dataBulan.status === 'Belum Bayar' ? '-' : dataBulan.status === 'Lunas' ? 'Lunas' : dataBulan.status === 'Dicicil' ? 'Cicil' : '-'}</span>
                               {dataBulan.tanggalBayar && dataBulan.status !== 'Belum Bayar' && (
                                 <span className="text-[7px] font-normal tracking-normal opacity-90">{formatDateShort(dataBulan.tanggalBayar)}</span>
@@ -623,8 +623,8 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                       );
                     })}
                     <td className="py-2.5 px-2 text-right">
-                      <div className="text-emerald-400 font-semibold">{formatIDR(totalPaid)}</div>
-                      <div className="text-rose-400 font-semibold">{formatIDR(totalUnpaid > 0 ? totalUnpaid : 0)}</div>
+                      <div className="text-emerald-700 font-bold">{formatIDR(totalPaid)}</div>
+                      <div className="text-rose-600 font-semibold">{formatIDR(totalUnpaid > 0 ? totalUnpaid : 0)}</div>
                     </td>
                   </tr>
                 );
@@ -632,17 +632,17 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
               
               {filteredAnggota.length === 0 && (
                 <tr>
-                  <td colSpan={14} className="py-8 text-center text-slate-500 italic">
+                  <td colSpan={14} className="py-8 text-center text-slate-400 italic">
                     Anggota tidak ditemukan
                   </td>
                 </tr>
               )}
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-slate-800">
-                <td className="pt-3 pl-3 font-bold text-slate-300 uppercase tracking-wider">Total Kas Terkumpul</td>
+              <tr className="border-t-2 border-slate-200">
+                <td className="pt-3 pl-3 font-bold text-slate-700 uppercase tracking-wider">Total Kas Terkumpul</td>
                 <td colSpan={12}></td>
-                <td className="pt-3 pr-2 text-right font-bold text-lg text-sky-400">
+                <td className="pt-3 pr-2 text-right font-bold text-lg text-violet-700">
                   {formatIDR(filteredAnggota.reduce((total, anggota) => total + Object.values(anggota.pembayaran[selectedTahun] || {}).reduce((sum, month) => sum + month.jumlah, 0), 0))}
                 </td>
               </tr>
@@ -650,25 +650,25 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
           </table>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-4 text-[10px] text-slate-500 border-t border-slate-900/60 pt-4 no-print">
+        <div className="mt-4 flex flex-wrap gap-4 text-[10px] text-slate-500 border-t border-slate-100 pt-4 no-print">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 bg-emerald-950/40 border border-emerald-500/20 inline-block"></span>
+            <span className="w-3 h-3 bg-emerald-50 border border-emerald-200 rounded-sm inline-block"></span>
             <span>Lunas (Minimal Rp 10.000)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 bg-amber-950/40 border border-amber-500/20 inline-block"></span>
+            <span className="w-3 h-3 bg-amber-50 border border-amber-200 rounded-sm inline-block"></span>
             <span>Dicicil (Kurang dari Rp 10.000)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 bg-slate-950 border border-slate-900 inline-block"></span>
+            <span className="w-3 h-3 bg-slate-100 border border-slate-200 rounded-sm inline-block"></span>
             <span>Belum Bayar (Belum ada dana masuk)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 bg-slate-900 border border-slate-800 inline-block opacity-40"></span>
+            <span className="w-3 h-3 bg-slate-100 border border-slate-200 rounded-sm inline-block opacity-40"></span>
             <span>Tidak Aktif</span>
           </div>
           {role === 'Bendahara' && (
-            <div className="text-sky-400 font-semibold ml-auto">
+            <div className="text-violet-600 font-semibold ml-auto">
               *Klik sel bulan untuk menginput pembayaran anggota.
             </div>
           )}
@@ -702,11 +702,11 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
 
       {/* Form Add Anggota */}
       {showAddForm && role === 'Bendahara' && (
-        <div className="glass-panel border-l-4 border-l-emerald-500 p-5 mb-6">
-          <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Daftarkan Anggota Baru</h3>
+        <div className="bg-white border-l-4 border-l-emerald-500 border border-slate-200 p-5 mb-6 rounded-2xl shadow-xs">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 mb-4">Daftarkan Anggota Baru</h3>
           <form onSubmit={handleAddAnggotaSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <input type="text" required placeholder="Nama Anggota" value={newNama} onChange={e => setNewNama(e.target.value)} className="bg-slate-900 border border-slate-800 px-3 py-2 text-xs" />
-            <select required value={newJabatan} onChange={e => setNewJabatan(e.target.value)} className="bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-slate-400 focus:outline-none">
+            <input type="text" required placeholder="Nama Anggota" value={newNama} onChange={e => setNewNama(e.target.value)} className="bg-slate-50 border border-slate-200 text-slate-800 px-3 py-2 text-xs rounded-xl focus:bg-white focus:outline-none focus:border-violet-400" />
+            <select required value={newJabatan} onChange={e => setNewJabatan(e.target.value)} className="bg-slate-50 border border-slate-200 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-violet-400 rounded-xl">
               <option value="" disabled>-- Pilih Jabatan --</option>
               <option value="Ketua">Ketua</option>
               <option value="Wakil Ketua">Wakil Ketua</option>
@@ -723,39 +723,39 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
               <option value="Kabid Pembinaan dan Pengembangan">Kabid Pembinaan dan Pengembangan</option>
               <option value="Anggota Pembinaan dan Pengembangan">Anggota Pembinaan dan Pengembangan</option>
             </select>
-            <input type="number" required placeholder="Tahun Kepengurusan" value={newTahun} disabled title="Sesuai dengan tahun buku yang sedang dibuka" className="bg-slate-900 border border-slate-800 px-3 py-2 text-xs opacity-60 cursor-not-allowed" />
-            <button type="submit" disabled={loading} className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider">{loading ? '...' : 'Simpan'}</button>
+            <input type="number" required placeholder="Tahun Kepengurusan" value={newTahun} disabled title="Sesuai dengan tahun buku yang sedang dibuka" className="bg-slate-100 border border-slate-200 text-slate-500 px-3 py-2 text-xs opacity-60 cursor-not-allowed rounded-xl" />
+            <button type="submit" disabled={loading} className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs uppercase tracking-wider py-2 rounded-xl shadow-xs transition">{loading ? '...' : 'Simpan'}</button>
           </form>
         </div>
       )}
 
       {/* Input Dues Payment Modal (Bendahara Only) */}
       {selectedPayUser && role === 'Bendahara' && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="w-full max-w-sm bg-slate-900 border border-slate-800 p-6 relative geo-corner-decor">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-sm bg-white border border-slate-200 p-6 relative rounded-3xl shadow-xl shadow-purple-900/10">
             <button
               onClick={() => setSelectedPayUser(null)}
-              className="absolute top-4 right-4 text-slate-500 hover:text-slate-300 focus:outline-none"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 focus:outline-none"
             >
               <span className="text-sm">✕</span>
             </button>
             
-            <h3 className="text-sm font-display font-bold uppercase tracking-wider text-slate-200 mb-4 flex items-center gap-1.5">
-              <CreditCard className="text-sky-500" size={16} /> Entri Pembayaran Iuran
+            <h3 className="text-sm font-display font-bold uppercase tracking-wider text-slate-800 mb-4 flex items-center gap-1.5">
+              <CreditCard className="text-violet-600" size={16} /> Entri Pembayaran Iuran
             </h3>
 
             <div className="mb-4 text-xs space-y-2">
-              <div className="flex justify-between border-b border-slate-900 pb-1.5">
+              <div className="flex justify-between border-b border-slate-100 pb-1.5">
                 <span className="text-slate-500">Nama Pengurus</span>
-                <span className="font-semibold text-slate-300">{selectedPayUser.nama}</span>
+                <span className="font-semibold text-slate-800">{selectedPayUser.nama}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-900 pb-1.5">
+              <div className="flex justify-between border-b border-slate-100 pb-1.5">
                 <span className="text-slate-500">Bulan & Tahun</span>
-                <span className="font-semibold text-slate-300">{selectedPayUser.bulan} {selectedTahun}</span>
+                <span className="font-semibold text-slate-800">{selectedPayUser.bulan} {selectedTahun}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Status Saat Ini</span>
-                <span className="text-amber-400 font-medium">
+                <span className="text-amber-600 font-bold">
                   {formatIDR(kasAnggota.find(a => a.nama === selectedPayUser.nama)?.pembayaran[selectedTahun]?.[selectedPayUser.bulan]?.jumlah || 0)}
                 </span>
               </div>
@@ -763,11 +763,11 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
 
             <form onSubmit={handlePaySubmit} className="space-y-4">
               <div className="space-y-1">
-                <label htmlFor="pay-amount" className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <label htmlFor="pay-amount" className="block text-[10px] font-bold uppercase tracking-wider text-slate-600">
                   Jumlah Pembayaran Baru (IDR) *
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-bold font-display text-xs">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 font-bold font-display text-xs">
                     Rp
                   </span>
                   <input
@@ -778,7 +778,7 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                     placeholder="Contoh: 10000"
                     value={bayarJumlah}
                     onChange={(e) => setBayarJumlah(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-sky-500"
+                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-slate-800 text-xs focus:outline-none focus:border-violet-400 focus:bg-white rounded-xl"
                   />
                 </div>
                 <p className="text-[9px] text-slate-500">
@@ -787,7 +787,7 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="pay-method" className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <label htmlFor="pay-method" className="block text-[10px] font-bold uppercase tracking-wider text-slate-600">
                   Metode Pembayaran *
                 </label>
                 <select
@@ -795,25 +795,25 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
                   required
                   value={bayarMetode}
                   onChange={(e) => setBayarMetode(e.target.value as 'Transfer' | 'Offline')}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-sky-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 text-slate-800 text-xs focus:outline-none focus:border-violet-400 focus:bg-white rounded-xl"
                 >
                   <option value="Offline">Offline (Uang Tunai)</option>
                   <option value="Transfer">Transfer</option>
                 </select>
               </div>
 
-              <div className="flex gap-2 justify-end border-t border-slate-950 pt-4 mt-2">
+              <div className="flex gap-2 justify-end border-t border-slate-100 pt-4 mt-2">
                 <button
                   type="button"
                   onClick={() => setSelectedPayUser(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 font-display text-[10px] font-bold uppercase tracking-wider"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-display text-[10px] font-bold uppercase tracking-wider rounded-xl transition"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-display text-[10px] font-bold uppercase tracking-wider transition flex items-center gap-1.5"
+                  className="px-5 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-display text-[10px] font-bold uppercase tracking-wider transition flex items-center gap-1.5 rounded-xl shadow-xs"
                 >
                   {loading ? 'Menyimpan...' : 'Catat Kas'}
                 </button>
@@ -825,10 +825,10 @@ export default function KasAnggotaComponent({ role, kasAnggota, onAddAnggota, on
       {/* ========================================================================= */}
       {/* SECTION: IURAN KEBUTUHAN */}
       {/* ========================================================================= */}
-      <div className="glass-panel geo-border p-5 mt-6 no-print">
+      <div className="bg-white/80 backdrop-blur-xl border border-slate-200/80 p-5 mt-6 no-print rounded-3xl shadow-xs">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-xs font-display font-semibold uppercase tracking-wider text-slate-400">
+            <h2 className="text-xs font-display font-semibold uppercase tracking-wider text-slate-700">
               Iuran Kebutuhan Organisasi (Non-Rutin)
             </h2>
             <p className="text-[10px] text-slate-500 mt-0.5">

@@ -153,13 +153,15 @@ export default function TransaksiComponent({ role, transaksi, onEditTransaksi, o
   };
 
   // Ambil daftar kategori unik dari data transaksi untuk filter
-  const allCategories = Array.from(new Set(transaksi.map(t => t.kategori)));
+  const allCategories = Array.from(new Set(transaksi.map(t => t.kategori || 'Lain-lain')));
 
   // Filter & Search Data
   const filteredData = transaksi.filter(t => {
-    const matchSearch = t.keterangan.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        t.kategori.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        t.inputOleh.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchLower = (searchTerm || '').toLowerCase();
+    const matchSearch = ((t.keterangan || '').toLowerCase().includes(searchLower)) || 
+                        ((t.kategori || '').toLowerCase().includes(searchLower)) ||
+                        ((t.inputOleh || '').toLowerCase().includes(searchLower)) ||
+                        ((t.id || '').toLowerCase().includes(searchLower));
     
     const matchJenis = filterJenis === 'Semua' || t.jenis === filterJenis;
     const matchKategori = filterKategori === 'Semua' || t.kategori === filterKategori;
@@ -172,16 +174,23 @@ export default function TransaksiComponent({ role, transaksi, onEditTransaksi, o
     6: 'Juli', 7: 'Agustus', 8: 'September', 9: 'Oktober', 10: 'November', 11: 'Desember'
   };
 
-  const sortedTransaksi = [...filteredData].sort((a, b) => new Date(a.tanggal).getTime() - new Date(b.tanggal).getTime());
+  const sortedTransaksi = [...filteredData].sort((a, b) => {
+    const dA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
+    const dB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
+    return dA - dB;
+  });
+
   const groupedTransaksi: { monthName: string; monthIndex: number; transactions: Transaksi[] }[] = [];
   let currentMonth = -1;
   let currentGroup: { monthName: string; monthIndex: number; transactions: Transaksi[] } | null = null;
 
   sortedTransaksi.forEach(t => {
-    const m = new Date(t.tanggal).getMonth();
+    const d = t.tanggal ? new Date(t.tanggal) : new Date();
+    const m = isNaN(d.getTime()) ? 0 : d.getMonth();
+    const monthName = BULAN_MAP[m] || 'Lain-lain';
     if (m !== currentMonth || !currentGroup) {
       currentMonth = m;
-      currentGroup = { monthName: BULAN_MAP[m], monthIndex: m, transactions: [] };
+      currentGroup = { monthName, monthIndex: m, transactions: [] };
       groupedTransaksi.push(currentGroup);
     }
     currentGroup.transactions.push(t);
