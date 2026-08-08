@@ -72,6 +72,30 @@ export default function App() {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [gasUrlInput, setGasUrlInput] = useState<string>(import.meta.env.VITE_GAS_URL || 'https://script.google.com/macros/s/AKfycbx6hipxrU7VFxEpdoNaoMoVVqcEJyb4P1ZWVqZ9N11ePn4WmXaUQm_ZtvbaVPbQrQxHOA/exec');
 
+  // Modal Login State (untuk login inline tanpa meninggalkan halaman)
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  const handleLoginModalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginEmail || !loginPassword) { setLoginError('Email dan password harus diisi'); return; }
+    setLoginLoading(true); setLoginError('');
+    try {
+      const loggedUser = await api.login(loginEmail, loginPassword);
+      setUser(loggedUser);
+      setShowLoginModal(false);
+      setLoginEmail(''); setLoginPassword('');
+      fetchData();
+    } catch (err: unknown) {
+      setLoginError(err instanceof Error ? err.message : 'Login gagal. Hubungi admin.');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
 
 
   // Fetch seluruh data jika user telah login
@@ -312,9 +336,9 @@ export default function App() {
     }
   };
 
-  // RENDER SCREEN JIKA BELUM LOGIN
+  // RENDER SCREEN JIKA BELUM LOGIN (hanya tampil jika user null dan bukan dari redirect tombol Masuk)
   if (!user) {
-    return <Login onLoginSuccess={(u) => setUser(u)} />;
+    return <Login onLoginSuccess={(u) => { setUser(u); fetchData(); }} />;
   }
 
   // TABS NAVIGATION MAP
@@ -402,7 +426,7 @@ export default function App() {
               </button>
             ) : (
               <button
-                onClick={() => setUser(null)}
+                onClick={() => { setLoginError(''); setShowLoginModal(true); }}
                 className="py-2 bg-violet-50 border border-violet-200/80 hover:bg-violet-100 text-violet-700 flex items-center justify-center gap-1.5 uppercase font-bold rounded-xl transition"
               >
                 <LogIn size={12} />
@@ -476,7 +500,7 @@ export default function App() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => { setUser(null); setSidebarOpen(false); }}
+                    onClick={() => { setLoginError(''); setShowLoginModal(true); setSidebarOpen(false); }}
                     className="py-2 bg-violet-50 border border-violet-200 text-violet-700 flex items-center justify-center gap-1.5 uppercase font-bold rounded-xl"
                   >
                     <LogIn size={12} />
@@ -816,6 +840,81 @@ export default function App() {
                   className="px-5 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-display text-[10px] font-bold uppercase tracking-wider rounded-xl shadow-md shadow-violet-500/20 transition"
                 >
                   Simpan URL
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL LOGIN INLINE (muncul saat klik tombol Masuk di sidebar) */}
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-sm bg-white border border-slate-200/80 p-7 relative rounded-3xl shadow-2xl shadow-purple-900/10">
+            <button
+              onClick={() => { setShowLoginModal(false); setLoginError(''); }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg font-bold"
+            >✕</button>
+
+            {/* Header Modal */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+                <LogIn size={18} className="text-violet-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-display font-bold tracking-wider text-slate-800">Masuk sebagai Bendahara</h3>
+                <p className="text-[10px] text-slate-500 mt-0.5">Diperlukan untuk input &amp; edit data</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleLoginModalSubmit} className="space-y-4">
+              {loginError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium rounded-xl">
+                  {loginError}
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder="bendahara@dkc.org"
+                  autoFocus
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 text-xs focus:outline-none focus:border-violet-400 focus:bg-white font-sans rounded-xl transition"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600">Password</label>
+                <input
+                  type="password"
+                  required
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 text-xs focus:outline-none focus:border-violet-400 focus:bg-white font-sans rounded-xl transition"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => { setShowLoginModal(false); setLoginError(''); }}
+                  className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-display text-[10px] font-bold uppercase tracking-wider rounded-xl transition"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={loginLoading}
+                  className="flex-1 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-display text-[10px] font-bold uppercase tracking-wider rounded-xl transition shadow-md shadow-violet-500/20 disabled:opacity-60 flex items-center justify-center gap-1.5"
+                >
+                  {loginLoading ? (
+                    <><RefreshCw size={12} className="animate-spin" /> Memproses...</>
+                  ) : 'Masuk'}
                 </button>
               </div>
             </form>
