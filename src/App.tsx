@@ -103,6 +103,8 @@ export default function App() {
   // LOGOUT
   const handleLogout = () => {
     localStorage.removeItem('kas_dkc_user');
+    // Hapus flag force_demo agar sesi berikutnya kembali normal
+    localStorage.removeItem('kas_dkc_force_demo');
     setUser({
       email: 'anggota@dkc.org',
       nama: 'Anggota DKC',

@@ -4,11 +4,15 @@ import { Transaksi, UtangPiutang, KasAnggota, User, PenerimaanDana, PerjalananDi
 const getScriptUrl = (): string => {
   const override = localStorage.getItem('kas_dkc_gas_url_override');
   if (override) return override.trim();
-  return (import.meta.env.VITE_GAS_URL || 'https://script.google.com/macros/s/AKfycbx6hipxrU7VFxEpdoNaoMoVVqcEJyb4P1ZWVqZ9N11ePn4WmXaUQm_ZtvbaVPbQrQxHOA/exec').trim();
+  return (import.meta.env.VITE_GAS_URL || '').trim();
 };
 
 // Cek apakah aplikasi berjalan dalam mode Demo
-export const isDemoMode = () => !getScriptUrl();
+// Mode demo aktif jika: tidak ada URL GAS, atau user paksa demo via localStorage flag
+export const isDemoMode = () => {
+  const forcedDemo = localStorage.getItem('kas_dkc_force_demo') === 'true';
+  return forcedDemo || !getScriptUrl();
+};
 
 // Initial Mock Data untuk Demo Mode
 const INITIAL_TRANSAKSI: Transaksi[] = [
@@ -127,14 +131,20 @@ async function postToGAS(action: string, payload: object = {}) {
   }
   
   try {
+    // Timeout 8 detik agar tidak menunggu terlalu lama jika GAS tidak responsif
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    
     const response = await fetch(getScriptUrl(), {
       method: 'POST',
       mode: 'cors',
       headers: {
         'Content-Type': 'text/plain', // Menggunakan text/plain mencegah preflight CORS issues di GAS
       },
-      body: JSON.stringify({ action, ...payload })
+      body: JSON.stringify({ action, ...payload }),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status}`);
@@ -148,39 +158,52 @@ async function postToGAS(action: string, payload: object = {}) {
   } catch (error: unknown) {
     console.error('GAS Request Error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
-    if (message.includes('Failed to fetch')) {
-      throw new Error(`Koneksi Gagal (Failed to fetch). Pastikan akses Google Script di-set ke "Anyone" (Siapa saja), atau coba "Reset URL" di menu Setup.`);
+    if (message.includes('Failed to fetch') || message.includes('AbortError') || (error instanceof Error && error.name === 'AbortError')) {
+      throw new Error(`Koneksi Gagal (Timeout/Failed to fetch). Pastikan akses Google Script di-set ke "Anyone" (Siapa saja), atau coba "Reset URL" di menu Setup.`);
     }
     throw new Error(`Koneksi Backend Gagal: ${message}`);
   }
 }
+
+// Tabel akun lokal (dipakai untuk fallback jika GAS offline)
+const LOCAL_ACCOUNTS: { email: string; password: string; user: User }[] = [
+  { email: 'bendahara@dkc.org', password: 'admin123', user: { email: 'bendahara@dkc.org', nama: 'Bendahara Utama', role: 'Bendahara' } },
+  { email: 'bendarahadkckabcilacap@gmail.com', password: 'bendaharadkc1101cilacap', user: { email: 'bendarahadkckabcilacap@gmail.com', nama: 'Bendahara DKC Cilacap', role: 'Bendahara' } },
+  { email: 'anggota@dkc.org', password: 'anggota123', user: { email: 'anggota@dkc.org', nama: 'Anggota DKC', role: 'Anggota' } },
+  { email: 'viewer@dkc.org', password: 'viewer123', user: { email: 'viewer@dkc.org', nama: 'Pimpinan / Kwarcab', role: 'Viewer' } },
+];
 
 // SERVICE EXPORTS
 export const api = {
   // 1. Authentikasi Login
   login: async (email: string, password: string): Promise<User> => {
     if (isDemoMode()) {
-      // Demo authentication
-      if ((email === 'bendahara@dkc.org' && password === 'admin123') || (email === 'bendarahadkckabcilacap@gmail.com' && password === 'bendaharadkc1101cilacap')) {
-        const user: User = { email, nama: 'Bendahara Utama', role: 'Bendahara' };
-        localStorage.setItem('kas_dkc_user', JSON.stringify(user));
-        return user;
-      } else if (email === 'anggota@dkc.org' && password === 'anggota123') {
-        const user: User = { email, nama: 'Anggota DKC', role: 'Anggota' };
-        localStorage.setItem('kas_dkc_user', JSON.stringify(user));
-        return user;
-      } else if (email === 'viewer@dkc.org' && password === 'viewer123') {
-        const user: User = { email, nama: 'Pimpinan / Kwarcab', role: 'Viewer' };
-        localStorage.setItem('kas_dkc_user', JSON.stringify(user));
-        return user;
-      } else {
-        throw new Error('Email atau password salah! Silakan coba lagi.');
+      // Demo authentication - pakai akun lokal
+      const found = LOCAL_ACCOUNTS.find(a => a.email === email && a.password === password);
+      if (found) {
+        localStorage.setItem('kas_dkc_user', JSON.stringify(found.user));
+        return found.user;
       }
+      throw new Error('Email atau password salah! Silakan coba lagi.');
     }
 
-    const res = await postToGAS('login', { email, password });
-    localStorage.setItem('kas_dkc_user', JSON.stringify(res.user));
-    return res.user;
+    try {
+      const res = await postToGAS('login', { email, password });
+      localStorage.setItem('kas_dkc_user', JSON.stringify(res.user));
+      return res.user;
+    } catch (err) {
+      // Fallback: jika GAS tidak bisa dijangkau, coba autentikasi lokal
+      console.warn('GAS login gagal, mencoba autentikasi lokal sebagai fallback...', err);
+      const found = LOCAL_ACCOUNTS.find(a => a.email === email && a.password === password);
+      if (found) {
+        // Aktifkan mode demo agar operasi selanjutnya pakai localStorage
+        localStorage.setItem('kas_dkc_force_demo', 'true');
+        localStorage.setItem('kas_dkc_user', JSON.stringify(found.user));
+        console.warn('Login berhasil via akun lokal. Mode demo diaktifkan otomatis.');
+        return found.user;
+      }
+      throw new Error('Login gagal: Koneksi ke server bermasalah dan email/password tidak cocok dengan akun lokal.');
+    }
   },
 
   // 2. Mengambil Semua Data
@@ -201,7 +224,20 @@ export const api = {
       };
     }
 
-    const res = await postToGAS('getAllData');
+    let res;
+    try {
+      res = await postToGAS('getAllData');
+    } catch (err) {
+      // Fallback ke data lokal jika GAS tidak bisa dijangkau
+      console.warn('GAS getAllData gagal, fallback ke data lokal.', err);
+      return {
+        transaksi: [...localTransaksi].sort((a, b) => b.tanggal.localeCompare(a.tanggal)),
+        utangPiutang: [...localUtangPiutang].sort((a, b) => b.tanggal.localeCompare(a.tanggal)),
+        kasAnggota: localKasAnggota,
+        penerimaanDana: [...localPenerimaanDana].sort((a, b) => b.tanggal.localeCompare(a.tanggal)),
+        perjalananDinas: localPerjalananDinas
+      };
+    }
     
     // Normalisasi data transaksi dari Google Sheets untuk mencegah tipe data korup
     const normalizedTransaksi: Transaksi[] = (res.transaksi || []).map((t: any) => {
